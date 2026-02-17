@@ -19,6 +19,7 @@ FROM nginx:alpine
 
 # Copy built app
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy nginx config for SPA routing
 RUN echo 'server { \
