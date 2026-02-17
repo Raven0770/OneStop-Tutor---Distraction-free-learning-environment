@@ -1,11 +1,4 @@
 services:
-  # PostgreSQL Database Service
-  - type: pserv
-    name: onestop-db
-    env: docker
-    ipAllowList: []
-    plan: free
-
   # Backend API Service
   - type: web
     name: onestop-backend
@@ -14,23 +7,26 @@ services:
     dockerfilePath: ./backend/Dockerfile
     plan: free
     autoDeploy: true
-    depends_on:
-      - onestop-db
+
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: onestop-db
           property: connectionString
+
       - key: SECRET_KEY
         generateValue: true
+
       - key: ENVIRONMENT
         value: production
+
       - key: CORS_ORIGINS
         value: https://onestop-frontend.onrender.com
-      - key: CLAUDE_API_KEY
-        value: ${CLAUDE_API_KEY}
 
-  # Frontend Web Service
+      - key: CLAUDE_API_KEY
+        sync: false
+
+  # Frontend Service
   - type: web
     name: onestop-frontend
     env: docker
@@ -38,8 +34,12 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     plan: free
     autoDeploy: true
-    depends_on:
-      - onestop-backend
+
     envVars:
       - key: VITE_API_URL
         value: https://onestop-backend.onrender.com
+
+databases:
+  - name: onestop-db
+    plan: free
+
